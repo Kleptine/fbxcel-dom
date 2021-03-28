@@ -60,6 +60,22 @@ impl Document {
                 .expect("Should never fail: Actually using `Document` objects")
         })
     }
+
+    /// Returns the "FBXHeaderExtension"->"SceneInfo" property block, if one exists.
+    pub fn scene_info(&self) -> Option<PropertiesHandle> {
+        let property_node = self
+            .tree()
+            .root()
+            .children_by_name("FBXHeaderExtension")
+            .next()?
+            .children_by_name("SceneInfo")
+            .next()?
+            .children_by_name("Properties70")
+            .next()?;
+
+        let handle = PropertiesHandle::new(PropertiesNodeId::new(property_node.node_id()), self);
+        Some(handle)
+    }
 }
 
 impl AsRef<Tree> for Document {
