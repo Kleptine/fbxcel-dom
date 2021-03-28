@@ -87,10 +87,23 @@ impl<'a> ModelHandle<'a> {
     }
 
     /// Returns the local rotation (Lcl Rotation) of this model object, if one is present.
+    /// For information on how the FBX SDK uses rotations, see:
+    /// https://download.autodesk.com/us/fbx/20112/FBX_SDK_HELP/index.html?url=WS1a9193826455f5ff1f92379812724681e696651.htm,topicNumber=d0e7429
     pub fn local_rotation(&self) -> anyhow::Result<Option<Vector3<f64>>> {
         // `Model` objects have native typename `FbxNode`.
         self.properties_by_native_typename("FbxNode")
             .get_property("Lcl Rotation")
+            .map(|prop| prop.load_value(MintLoader::<Vector3<f64>>::new()))
+            .transpose()
+    }
+
+    /// Returns the pre-rotation (PreRotation) of this model object, if one is present.
+    /// For information on how the FBX SDK uses rotations, see:
+    /// https://download.autodesk.com/us/fbx/20112/FBX_SDK_HELP/index.html?url=WS1a9193826455f5ff1f92379812724681e696651.htm,topicNumber=d0e7429
+    pub fn pre_rotation(&self) -> anyhow::Result<Option<Vector3<f64>>> {
+        // `Model` objects have native typename `FbxNode`.
+        self.properties_by_native_typename("FbxNode")
+            .get_property("PreRotation")
             .map(|prop| prop.load_value(MintLoader::<Vector3<f64>>::new()))
             .transpose()
     }
