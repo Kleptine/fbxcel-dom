@@ -9,8 +9,10 @@ use crate::v7400::{
     object::{scene::SceneHandle, ObjectHandle, ObjectsCache},
 };
 
+pub use self::global_settings::GlobalSettings;
 pub use self::loader::Loader;
 
+mod global_settings;
 mod loader;
 
 /// FBX DOM.
@@ -63,7 +65,7 @@ impl Document {
     }
 
     /// Returns the "GlobalSettings" root level property block, if one exists.
-    pub fn global_settings(&self) -> Option<PropertiesHandle> {
+    pub fn global_settings(&self) -> Option<GlobalSettings> {
         let property_node = self
             .tree()
             .root()
@@ -73,7 +75,8 @@ impl Document {
             .next()?;
 
         let handle = PropertiesHandle::new(PropertiesNodeId::new(property_node.node_id()), self);
-        Some(handle)
+
+        Some(GlobalSettings { properties: handle })
     }
 
     /// Returns the "FBXHeaderExtension"->"SceneInfo" property block, if one exists.
